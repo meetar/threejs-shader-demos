@@ -2,6 +2,7 @@
 	<head>
 		<meta charset="utf-8">
     <script type="text/javascript" src="three.js"></script>
+   	<script type="text/javascript" src="dat.gui.min.js"></script>
    	<script src="TrackballControls.js"></script>
     
 	</head>
@@ -471,14 +472,26 @@ function imageFromCanvas(canvas) {
   
 
 
-  //
-  // GUI
-  //
-
+  var initDisp = function() {
+    this.scale = 25;
+  }
+  
+  
   window.onload = function() {
-    start();    
-    update();
-  };
+    var disp = new initDisp();
+    var gui = new dat.GUI();
+    var scaleVal = 25.0;
+    
+ 		scControl = gui.add(disp, "scale", 0, 200);
+    scControl.onChange(function(value) {
+      scaleVal = value;
+      uniforms[ "uDisplacementScale" ].value = value;
+    });
+
+    start();
+    controls.update();
+
+  }
 
 
     
