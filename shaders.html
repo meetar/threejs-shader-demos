@@ -1,0 +1,182 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+    <script type="text/javascript" src="three.js"></script>
+   	<script type="text/javascript" src="dat.gui.min.js"></script>
+   	<script src="TrackballControls.js"></script>
+    
+	</head>
+	<body style="background:#ececec; margin:0px; padding:0px" onmousemove="update()">
+
+  <div id="container"></div>
+
+
+    
+  <!-- ----- MAIN THREE.JS CODE ----- -->   
+ 
+  <script type="text/javascript">
+  var camera, scene, renderer, container;
+  var light, ambientLight, pointLight, geometry, mesh, material;
+  var basic, lambert, phong;
+
+  function start() {
+
+    container = document.getElementById( 'container' );
+
+    
+    // --- WebGl renderer
+
+    try {
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.autoClear = false;
+        container.appendChild( renderer.domElement );
+    }
+    catch (e) {
+        alert(e);
+    }
+
+    scene = new THREE.Scene();
+
+    // --- Camera
+
+    var fov = 15; // camera field-of-view in degrees
+    var width = renderer.domElement.width;
+    var height = renderer.domElement.height;
+    var aspect = width / height; // view aspect ratio
+    camera = new THREE.PerspectiveCamera( fov, aspect );
+    camera.position.x = 300;
+    camera.position.y = -100;
+    camera.position.z = -1200;
+    camera.lookAt(scene.position);
+    camera.updateMatrix();
+    // set camera range for depth shader min and max
+    camera.near = 1100;
+    camera.far = 1300;
+
+    controls = new THREE.TrackballControls( camera, renderer.domElement );
+    controls.rotateSpeed = 3.0;
+    controls.zoomSpeed = 1.2;
+    controls.panSpeed = 0.8;
+    controls.noZoom = false;
+    controls.noPan = false;
+    controls.staticMoving = true;
+    controls.dynamicDampingFactor = 0.3;
+    controls.addEventListener( 'change', render );
+
+    
+    // --- Lights
+        
+    ambientLight = new THREE.AmbientLight( 0x050505, 0.0 );
+    scene.add( ambientLight );
+    
+    pointLight = new THREE.PointLight( 0xffffff, 1.0 );
+    scene.add( pointLight );
+    
+    pointLight.position.set(0, 100, -200);
+
+    var sphere          = new THREE.SphereGeometry( 100, 8, 8 );
+    light               = new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color:0xffffff } ) );
+    light.position      = pointLight.position;
+    light.scale.x       = light.scale.y = light.scale.z = 0.05;
+    scene.add(light);
+
+    
+    // --- Material
+
+
+    
+    // --- Geometry
+
+    geometry = new THREE.SphereGeometry(100, 16, 16);
+
+    material = basic;
+    
+    if(typeof mesh != 'undefined') scene.remove(mesh);
+    mesh = new THREE.Mesh( geometry, material );
+    scene.add(mesh);
+    log(mesh);
+  
+    
+    setInterval(function() {
+      mesh.rotation.y += .01;
+      update();
+    }, 30);
+    
+
+    geometry.dynamic = true;
+    // scene.add(mesh);
+    // log(mesh);
+update();
+    
+
+    
+  }
+  
+  
+  function update() {
+    render();
+    controls.update(); // trackball interaction
+  }
+
+  function render() {
+    renderer.clear();
+    renderer.render(scene, camera);
+  }
+   
+  function log(n) {
+    console.log(n);
+  }
+  
+
+
+  //
+  // GUI
+  //
+
+  var initDisp = function() {
+    this.shader = "basic";
+    
+    
+  }
+  
+  
+  window.onload = function() {
+  
+    var disp = new initDisp();
+    var gui = new dat.GUI();
+
+    
+    basic = new THREE.MeshBasicMaterial( { color: 0x666666 } );
+    lambert = new THREE.MeshLambertMaterial( );
+    phong = new THREE.MeshPhongMaterial( { specular: 0xffffff } );
+    depth = new THREE.MeshDepthMaterial( { specular: 0xffffff } );
+    normal = new THREE.MeshNormalMaterial( { specular: 0xffffff } );
+    wireframe = new THREE.MeshBasicMaterial( { color: 0x666666, wireframe: true } );
+    
+    sControl = gui.add(disp, 'shader', [ 'basic', 'lambert', 'phong', 'depth', 'normal', 'wireframe' ] );
+
+    sControl.onChange(function(value) {
+      if (value == "basic") material = basic;
+      else if (value == "lambert") material = lambert;
+      else if (value == "phong") material = phong;
+      else if (value == "depth") material = depth;
+      else if (value == "normal") material = normal;
+      else if (value == "wireframe") material = wireframe;
+      scene.remove(mesh);
+      geometry = new THREE.SphereGeometry(100, 16, 16);
+      mesh = new THREE.Mesh( geometry, material );
+      scene.add(mesh);
+      update();
+    });
+  
+    start();
+    controls.update();
+
+  }
+    
+      
+  </script>
+  
+	</body>
+</html>
