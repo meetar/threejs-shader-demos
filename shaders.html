@@ -84,35 +84,48 @@
     
     // --- Material
 
-
+  
+    basic = new THREE.MeshBasicMaterial( { color: 0x666666 } );
+    lambert = new THREE.MeshLambertMaterial( );
+    phong = new THREE.MeshPhongMaterial( { specular: 0xffffff } );
+    depth = new THREE.MeshDepthMaterial( { specular: 0xffffff } );
+    normal = new THREE.MeshNormalMaterial( { specular: 0xffffff } );
+    wireframe = new THREE.MeshBasicMaterial( { color: 0x666666, wireframe: true } );
     
     // --- Geometry
 
     geometry = new THREE.SphereGeometry(100, 16, 16);
 
-    material = basic;
-    
     if(typeof mesh != 'undefined') scene.remove(mesh);
-    mesh = new THREE.Mesh( geometry, material );
+    mesh = new THREE.Mesh( geometry, basic );
     scene.add(mesh);
-    log(mesh);
-  
-    
+      
     setInterval(function() {
       mesh.rotation.y += .01;
       update();
     }, 30);
     
-
-    geometry.dynamic = true;
-    // scene.add(mesh);
-    // log(mesh);
-update();
-    
-
+    update();
     
   }
   
+    
+  function shade(shader) {
+    if (shader == "basic") material = basic;
+    else if (shader == "lambert") material = lambert;
+    else if (shader == "phong") material = phong;
+    else if (shader == "depth") material = depth;
+    else if (shader == "normal") material = normal;
+    else if (shader == "wireframe") material = wireframe;
+
+    // check to make sure variables are defined
+    if (typeof mesh != "undefined") scene.remove(mesh);
+    geometry = new THREE.SphereGeometry(100, 16, 16);
+    mesh = new THREE.Mesh( geometry, material );
+    if (typeof scene != "undefined") scene.add(mesh);
+
+    update();
+  }
   
   function update() {
     render();
@@ -135,17 +148,30 @@ update();
   //
 
   var initDisp = function() {
-    this.shader = "basic";
-    
-    
+    this.basic = function() {
+      shade("basic");
+    }
+    this.lambert = function() {
+      shade("lambert");
+    }
+    this.phong = function() {
+      shade("phong");
+    }
+    this.depth = function() {
+      shade("depth");
+    }
+    this.normal = function() {
+      shade("normal");
+    }
+    this.wireframe = function() {
+      shade("wireframe");
+    }
   }
-  
   
   window.onload = function() {
   
     var disp = new initDisp();
     var gui = new dat.GUI();
-
     
     basic = new THREE.MeshBasicMaterial( { color: 0x666666 } );
     lambert = new THREE.MeshLambertMaterial( );
@@ -153,22 +179,13 @@ update();
     depth = new THREE.MeshDepthMaterial( { specular: 0xffffff } );
     normal = new THREE.MeshNormalMaterial( { specular: 0xffffff } );
     wireframe = new THREE.MeshBasicMaterial( { color: 0x666666, wireframe: true } );
-    
-    sControl = gui.add(disp, 'shader', [ 'basic', 'lambert', 'phong', 'depth', 'normal', 'wireframe' ] );
 
-    sControl.onChange(function(value) {
-      if (value == "basic") material = basic;
-      else if (value == "lambert") material = lambert;
-      else if (value == "phong") material = phong;
-      else if (value == "depth") material = depth;
-      else if (value == "normal") material = normal;
-      else if (value == "wireframe") material = wireframe;
-      scene.remove(mesh);
-      geometry = new THREE.SphereGeometry(100, 16, 16);
-      mesh = new THREE.Mesh( geometry, material );
-      scene.add(mesh);
-      update();
-    });
+    gui.add(disp, "basic");
+    gui.add(disp, "lambert");
+    gui.add(disp, "phong");
+    gui.add(disp, "depth");
+    gui.add(disp, "normal");
+    gui.add(disp, "wireframe");
   
     start();
     controls.update();
