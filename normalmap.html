@@ -311,8 +311,7 @@
     
     // MATERIAL
 
-    var ambient = 0x000000, diffuse = 0xffffff, specular = 0xffffff, shininess = 50.0, scale = 100;
-
+    var ambient = 0x000000, diffuse = 0xffffff, specular = 0xffffff, shininess = 50.0;
     diffTexture = new THREE.Texture(imgc);
     dispTexture = new THREE.Texture(imgc);
 
@@ -496,14 +495,14 @@ function imageFromCanvas(canvas) {
     this.displacement = true;
     this.specular = true;
     this.normals = true;
-    this.scale = 25;
+    this.scale = 100;
   }
   
   
   window.onload = function() {
     var disp = new initDisp();
     var gui = new dat.GUI();
-    var scaleVal = 25.0;
+    var scaleVal = 100.0;
     
 		dControl = gui.add(disp, "displacement");
     dControl.onChange(function(value) {
