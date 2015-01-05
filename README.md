@@ -3,7 +3,7 @@ shader-demos
 
 A few basic three.js shader demos.
 
-![An animated gif of a llama used as a displacement map](http://meetar.github.io/shader-demos/llama3D.gif)
+![An animated gif of a llama used as a displacement map](https://raw.githubusercontent.com/meetar/threejs-shader-demos/gh-pages/llama3D.gif)
 
 http://meetar.github.io/shader-demos/llama.html - use an animated gif as a displacement map
 
